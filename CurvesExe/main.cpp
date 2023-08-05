@@ -22,11 +22,22 @@ int main()
 
     for (auto curve : curves)
     {
-        //std::cout << curve->getPoint(t).x << " " << curve->getPoint(t).y << " " << curve->getPoint(t).z << "\n";
-        //std::cout << curve->getDerivativeAt(t).x << " " << curve->getDerivativeAt(t).y << " " << curve->getDerivativeAt(t).z << "\n";
+        std::cout << curve->getPoint(t).x << " " << curve->getPoint(t).y << " " << curve->getPoint(t).z << "\n";
+        std::cout << curve->getDerivativeAt(t).x << " " << curve->getDerivativeAt(t).y << " " << curve->getDerivativeAt(t).z << "\n";
     }
 
     std::vector<std::shared_ptr<Circle>> circles;
+    // reserving memory for circles
+    int neededSize = 0;
+    for (auto curve : curves)
+    {
+		auto c = std::dynamic_pointer_cast<Circle>(curve);
+        if (c)
+        {
+			neededSize++;
+		}
+	}
+    circles.reserve(neededSize);
 
     for (auto curve : curves)
     {
@@ -41,14 +52,14 @@ int main()
 
     for (auto circle : circles)
     {
-        //std::cout << circle->getRadius() << "\n";
+        std::cout << circle->getRadius() << "\n";
     }
 
     double totalSumOfRadii = 0;
     int T = omp_get_thread_num();
     int maxT = omp_get_max_threads();
     std::cout << T << " " << maxT << "\n";
-#pragma omp parallel for reduction(+:totalSumOfRadii)
+    #pragma omp parallel for reduction(+:totalSumOfRadii)
     for (int i = 0; i < circles.size(); i++)
     {
         std::cout << "Thread " << omp_get_thread_num() << " is working on circle " << i << "\n";
